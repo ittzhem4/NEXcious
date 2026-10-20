@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NEXcious Mini App</title>
+
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
     <!-- Adsgram SDK -->
-    <script src="https://sad.adsgram.ai/js/sad.js"></script>
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -19,10 +22,12 @@
             flex-direction: column;
             align-items: center;
         }
+
         .container {
             width: 100%;
             max-width: 400px;
         }
+
         .card {
             background: #1e293b;
             border-radius: 16px;
@@ -32,141 +37,139 @@
             text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
+
         h2 {
             font-size: 1.1rem;
             margin-bottom: 8px;
             color: #38bdf8;
             margin-top: 0;
         }
+
         .balance {
             font-size: 2.2rem;
             font-weight: bold;
             margin: 10px 0;
-            color: #4ade80;
+            color: #f59e0b;
         }
-        .sub-text {
-            color: #94a3b8;
-            font-size: 0.85rem;
-        }
-        .btn {
-            background-color: #2563eb;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
+
+        button {
             width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background-color: #3b82f6;
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
             cursor: pointer;
             margin-top: 10px;
             transition: background 0.2s;
         }
-        .btn:hover {
-            background-color: #1d4ed8;
+
+        button:active {
+            background-color: #2563eb;
         }
-        .btn-success {
-            background-color: #16a34a;
-        }
-        .btn-success:hover {
-            background-color: #15803d;
-        }
+
         input {
-            width: 100%;
+            width: 90%;
             padding: 12px;
-            border-radius: 10px;
-            border: 1px solid #475569;
-            background: #0f172a;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background-color: #0f172a;
             color: white;
             margin-top: 8px;
-            box-sizing: border-box;
-            font-size: 0.95rem;
-            outline: none;
-        }
-        input:focus {
-            border-color: #38bdf8;
+            margin-bottom: 12px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Balance Section -->
+        <!-- بەشی پیشاندانی خاڵەکان -->
         <div class="card">
-            <h2>Account Balance</h2>
-            <div class="balance" id="points">0</div>
-            <p class="sub-text">Estimated Value: <span id="usdValue">$0.00</span></p>
+            <h2>Your Points</h2>
+            <div class="balance" id="pointsDisplay">0</div>
+            <p style="font-size: 0.85rem; color: #94a3b8;">Earn points by watching ads!</p>
         </div>
 
-        <!-- Ads Section -->
+        <!-- بەشی ڕیکلام -->
         <div class="card">
-            <h2>Watch Ads</h2>
-            <p class="sub-text">Watch and earn 5 points per ad</p>
-            <button class="btn" onclick="showAd()">Watch Ad (+5 Points)</button>
+            <h2>Monetization</h2>
+            <button id="showAdBtn">تەماشای ڕیکلام بکە (+5 Points)</button>
         </div>
 
-        <!-- Withdrawal Section -->
+        <!-- بەشی ڕاکێشانی خاڵ/باڵانس -->
         <div class="card">
-            <h2>Withdrawal Request</h2>
-            <p class="sub-text">Minimum withdrawal: 500 points</p>
-            <input type="text" id="walletInput" placeholder="Enter wallet address or Telegram ID">
-            <button class="btn btn-success" onclick="requestWithdrawal()">Submit Request</button>
+            <h2>Withdraw</h2>
+            <input type="text" id="walletInput" placeholder="Enter Wallet Address">
+            <button onclick="requestWithdrawal()">Request Withdrawal (500 Points)</button>
         </div>
     </div>
 
     <script>
-        let tg = window.Telegram.WebApp;
-        tg.expand();
+        // ئامادەکردنی تەلەگرام WebApp
+        const tg = window.Telegram ? window.Telegram.WebApp : null;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+        }
 
         let points = 0;
-        
-        // Put your actual Adsgram Block ID here when ready
-        const AdController = window.Adsgram.init({ blockId: "YOUR-ADSGRAM-BLOCK-ID" });
 
         function updateUI() {
-            document.getElementById('points').innerText = points;
-            let usd = (points * 0.001).toFixed(2); // Example: 1000 points = $1.00
-            document.getElementById('usdValue').innerText = "$" + usd;
+            document.getElementById('pointsDisplay').innerText = points;
         }
 
-        function showAd() {
-            AdController.show().then((result) => {
-                points += 5;
-                updateUI();
-                tg.showAlert("Reward successfully claimed! (+5 Points)");
-            }).catch((result) => {
-                tg.showAlert("Ad was not completed or an error occurred.");
-            });
-        }
-
-        function requestWithdrawal() {
-            let wallet = document.getElementById('walletInput').value.trim();
-            if (!wallet) {
-                tg.showAlert("Please enter your wallet address!");
-                return;
-            }
-            if (points < 500) {
-                tg.showAlert("You have less than 500 points, you cannot withdraw yet.");
-                return;
-                <button id="showAdBtn">تەماشای ڕیکلام بکە و پاداشت وەرگرە</button>
-
-            tg.showAlert("Withdrawal request submitted successfully!");
-            points -= 500; // Deduct points after request
-            updateUI();
-            document.getElementById('walletInput').value = '';
-            <button id="showAdBtn">تەماشای ڕیکلام بکە و پاداشت وەربگرە</button>
-
-    <script>
+        // ڕێکخستنی Adsgram SDK
         const AdController = window.Adsgram.init({ 
             blockId: "55168" 
         });
 
+        // کلیک لەسەر دوگمەی ڕیکلام
         document.getElementById('showAdBtn').addEventListener('click', () => {
             AdController.show().then((result) => {
-                alert("پیرۆزە! پاداشتەکەت بەدەستهێنا.");
+                // بەکارهێنەر ڕیکلامەکەی بە تەواوی بینی
+                points += 5;
+                updateUI();
+                
+                if (tg) {
+                    tg.showAlert("پیرۆزە! ٥ خاڵت وەرگرت.");
+                } else {
+                    alert("پیرۆزە! ٥ خاڵت وەرگرت.");
+                }
             }).catch((result) => {
-                console.log("ڕیکلامەکە تەواو نەکرا:", result);
-                        });
-    });
-</script>
+                // کاتێک ڕیکلامەکە تەواو ناکرێت یان بەردەست نییە
+                console.log("Ad status/error:", result);
+                if (tg) {
+                    tg.showAlert("ڕیکلام بەردەست نییە یان پێشوەختە داخرا!");
+                } else {
+                    alert("ڕیکلام بەردەست نییە یان پێشوەختە داخرا!");
+                }
+            });
+        });
+
+        // داواکاری ڕاکێشانی خاڵەکان
+        function requestWithdrawal() {
+            let wallet = document.getElementById('walletInput').value.trim();
+            if (!wallet) {
+                if (tg) tg.showAlert("Please enter your wallet address!");
+                else alert("Please enter your wallet address!");
+                return;
+            }
+            if (points < 500) {
+                if (tg) tg.showAlert("You have less than 500 points, you cannot withdraw yet.");
+                else alert("You have less than 500 points, you cannot withdraw yet.");
+                return;
+            }
+            
+            if (tg) tg.showAlert("Withdrawal request submitted successfully!");
+            else alert("Withdrawal request submitted successfully!");
+            
+            points -= 500;
+            updateUI();
+            document.getElementById('walletInput').value = '';
+        }
+    </script>
 </body>
 </html>
