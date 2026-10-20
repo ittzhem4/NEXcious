@@ -147,7 +147,8 @@
             if (points < 500) {
                 tg.showAlert("You have less than 500 points, you cannot withdraw yet.");
                 return;
-            }
+                <button id="showAdBtn">تەماشای ڕیکلام بکە و پاداشت وەرگرە</button>
+
             tg.showAlert("Withdrawal request submitted successfully!");
             points -= 500; // Deduct points after request
             updateUI();
