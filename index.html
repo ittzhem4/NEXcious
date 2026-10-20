@@ -152,7 +152,20 @@
             points -= 500; // Deduct points after request
             updateUI();
             document.getElementById('walletInput').value = '';
-        }
-    </script>
+            <button id="showAdBtn">تەماشای ڕیکلام بکە و پاداشت وەربگرە</button>
+
+    <script>
+        const AdController = window.Adsgram.init({ 
+            blockId: "55168" 
+        });
+
+        document.getElementById('showAdBtn').addEventListener('click', () => {
+            AdController.show().then((result) => {
+                alert("پیرۆزە! پاداشتەکەت بەدەستهێنا.");
+            }).catch((result) => {
+                console.log("ڕیکلامەکە تەواو نەکرا:", result);
+                        });
+    });
+</script>
 </body>
 </html>
